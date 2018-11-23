@@ -13,7 +13,7 @@ if (! fs.existsSync('./data')) {
 
 const scrapData = [];
 
- http.get('http://shirts4mike.com/shirts.php', response => {
+  http.get('http://shirts4mike.com/shirts.php', response => {
    let html = '';
    response.on('data', chunk => {
      html += chunk;
@@ -45,3 +45,4 @@ const scrapData = [];
      }); //end forEach
    }); //end response end event
  }); //end get method
+console.log(scrapData);
