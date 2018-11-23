@@ -5,7 +5,7 @@
   "main": "scraper.js",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "csv-stringify": "^5.0.0"
+    "d3-dsv": "^1.0.10"
   },
   "devDependencies": {},
   "scripts": {

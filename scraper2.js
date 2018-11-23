@@ -2,7 +2,7 @@
 const fs = require('fs');
 const http = require('http');
 const cheerio = require('cheerio');
-const csvStringer = require('csv-stringify');
+const d3 = require('d3-dsv');
 
 /**
 * Checks for data file in working directory. Adds one if not found.
@@ -36,28 +36,27 @@ function grabData(url) {
 }
 
 function scrapeInfo(links) {
-  const scrapData = [];
-  links.forEach(link => {
+  links.forEach((link, index) => {
     http.get(link, response =>{
       let productHTML = '';
       response.on('data', chunk => {
         productHTML += chunk;
       }); //end response data event
-      response.on('end', () =>{
+      response.on('end', () => {
         const $product = cheerio.load(productHTML);
-        let dataset = [];
-        dataset.push($product('img', '.shirt-picture').attr('alt'));
-        dataset.push($product('.price').text());
-        dataset.push($product('img', '.shirt-picture').attr('src'));
-        dataset.push(link)
-        dataset.push(new Date());
-        scrapData.push(dataset);
+        const dataset = [];
+        let record = {};
+        record.title = $product('img', '.shirt-picture').attr('alt').replace(',', '');
+        record.price = $product('.price').text();
+        record.img_url = $product('img', '.shirt-picture').attr('src');
+        record.url = link;
+        record.time = new Date().getTime();
+        dataset.push(record);
+        console.log(d3.csvFormat(dataset));
       }); //end response end event
     }); //end get method
   }); //end forEach
-  return scrapData;
 }
 
 grabData('http://shirts4mike.com/shirts.php')
-  .then(scrapeInfo)
-  .then(console.log());
+  .then(scrapeInfo);
