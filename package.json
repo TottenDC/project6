@@ -1,0 +1,28 @@
+{
+  "name": "web_scraper_project",
+  "version": "1.0.0",
+  "description": "Daily command line app to scrape a practice ecommerce site and store data in a CSV file.",
+  "main": "scraper.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "csv-stringify": "^5.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TottenDC/project6.git"
+  },
+  "keywords": [
+    "web",
+    "scraper"
+  ],
+  "author": "Daniel Totten",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TottenDC/project6/issues"
+  },
+  "homepage": "https://github.com/TottenDC/project6#readme"
+}
