@@ -27,12 +27,12 @@ function grabData(url) {
             links.push(link);
           }); //end each
           resolve(links);
-        });
-      });
+        }); //end response
+      }); //end get
     } catch (error) {
         reject(error);
     }
-  });
+  }); //end promise
 }
 
 function scrapeInfo(links) {
@@ -62,9 +62,18 @@ function scrapeInfo(links) {
     }); // end promise
     dataset.push(promise);
   }); //end forEach
-  console.log(dataset);
-  Promise.all(dataset).then(function (results) {console.log(results)});
+  return Promise.all(dataset);
 }
 
+function generateCsvFile(dataset) {
+  const csvDataset = d3.csvFormat(dataset);
+  const fileName = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`
+  fs.writeFile(`./data/${fileName}.csv`, csvDataset, (error) => {
+    if (error) throw error;
+    console.log('File saved successfully.');
+  }); //end writeFile
+
+}
 grabData('http://shirts4mike.com/shirts.php')
-  .then(scrapeInfo);
+  .then(scrapeInfo)
+  .then(generateCsvFile);
