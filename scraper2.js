@@ -36,26 +36,34 @@ function grabData(url) {
 }
 
 function scrapeInfo(links) {
+  const dataset = [];
   links.forEach((link, index) => {
-    http.get(link, response =>{
-      let productHTML = '';
-      response.on('data', chunk => {
-        productHTML += chunk;
-      }); //end response data event
-      response.on('end', () => {
-        const $product = cheerio.load(productHTML);
-        const dataset = [];
-        let record = {};
-        record.title = $product('img', '.shirt-picture').attr('alt').replace(',', '');
-        record.price = $product('.price').text();
-        record.img_url = $product('img', '.shirt-picture').attr('src');
-        record.url = link;
-        record.time = new Date().getTime();
-        dataset.push(record);
-        console.log(d3.csvFormat(dataset));
-      }); //end response end event
-    }); //end get method
+    let promise = new Promise((resolve, reject) => {
+      try {
+        http.get(link, response =>{
+          let productHTML = '';
+          response.on('data', chunk => {
+            productHTML += chunk;
+          }); //end response data event
+          response.on('end', () => {
+            const $product = cheerio.load(productHTML);
+            let record = {};
+            record.title = $product('img', '.shirt-picture').attr('alt').replace(',', '');
+            record.price = $product('.price').text();
+            record.img_url = $product('img', '.shirt-picture').attr('src');
+            record.url = link;
+            record.time = new Date().getTime();
+            resolve(record);
+          }); //end response end event
+        }); //end get method
+      } catch(error) {
+          reject(error);
+      }
+    }); // end promise
+    dataset.push(promise);
   }); //end forEach
+  console.log(dataset);
+  Promise.all(dataset).then(function (results) {console.log(results)});
 }
 
 grabData('http://shirts4mike.com/shirts.php')
