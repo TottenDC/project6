@@ -52,7 +52,7 @@ function scrapeInfo(links) {
             record.price = $product('.price').text();
             record.img_url = $product('img', '.shirt-picture').attr('src');
             record.url = link;
-            record.time = new Date().getTime();
+            record.time = new Date().toTimeString();
             resolve(record);
           }); //end response end event
         }); //end get method
@@ -67,13 +67,12 @@ function scrapeInfo(links) {
 
 function generateCsvFile(dataset) {
   const csvDataset = d3.csvFormat(dataset);
-  const fileName = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`
-  fs.writeFile(`./data/${fileName}.csv`, csvDataset, (error) => {
+  fs.writeFile(`./data/${new Date().toISOString().slice(0, 10)}.csv`, csvDataset, (error) => {
     if (error) throw error;
     console.log('Website scraped and file saved successfully.');
   }); //end writeFile
-
 }
+
 grabData('http://shirts4mike.com/shirts.php')
   .then(scrapeInfo)
   .then(generateCsvFile);
