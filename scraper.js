@@ -11,10 +11,24 @@ if (! fs.existsSync('./data')) {
   fs.mkdirSync('./data');
 }
 
+/**
+  * Logs error message to console and adds the error to a log file.
+  * @param error The error object.
+*/
+function handleError(error) {
+  console.log('Could not connect to shirts4mike.com. Program did not scrape data.')
+  fs.appendFile('./scraper-error.log', `[${new Date()}] ` + error.message, () => {
+    console.log('The error has been saved to scraper-error.log.')
+  }); //end appendFile
+}
+
+/**
+  * Creates
+*/
 function grabData(url) {
   return new Promise((resolve, reject) => {
     try {
-      http.get(url, response => {
+      const request = http.get(url, response => {
         let html = '';
         response.on('data', chunk => {
           html += chunk;
@@ -29,6 +43,7 @@ function grabData(url) {
           resolve(links);
         }); //end response
       }); //end get
+      request.on('error', handleError);
     } catch (error) {
         reject(error);
     }
@@ -40,7 +55,7 @@ function scrapeInfo(links) {
   links.forEach((link, index) => {
     let promise = new Promise((resolve, reject) => {
       try {
-        http.get(link, response =>{
+        const request = http.get(link, response =>{
           let productHTML = '';
           response.on('data', chunk => {
             productHTML += chunk;
@@ -56,6 +71,7 @@ function scrapeInfo(links) {
             resolve(record);
           }); //end response end event
         }); //end get method
+        request.on('error', handleError);
       } catch(error) {
           reject(error);
       }
@@ -67,12 +83,12 @@ function scrapeInfo(links) {
 
 function generateCsvFile(dataset) {
   const csvDataset = d3.csvFormat(dataset);
-  fs.writeFile(`./data/${new Date().toISOString().slice(0, 10)}.csv`, csvDataset, (error) => {
-    if (error) throw error;
+  fs.writeFile(`./data/${new Date().toISOString().slice(0, 10)}.csv`, csvDataset, () => {
     console.log('Website scraped and file saved successfully.');
   }); //end writeFile
 }
 
 grabData('http://shirts4mike.com/shirts.php')
   .then(scrapeInfo)
-  .then(generateCsvFile);
+  .then(generateCsvFile)
+  .catch(handleError);
