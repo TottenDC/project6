@@ -5,7 +5,7 @@ const cheerio = require('cheerio');
 const d3 = require('d3-dsv');
 
 /**
-* Checks for data file in working directory. Adds one if not found.
+  * Checks for data file in working directory. Adds one if not found.
 */
 if (! fs.existsSync('./data')) {
   fs.mkdirSync('./data');
@@ -58,7 +58,6 @@ function grabData(url) {
   * Returns the array only once all data has been loaded via Promise.all
   *@param array The array of product links returned from previous function.
 */
-
 function scrapeInfo(links) {
   const dataset = [];
   links.forEach((link, index) => {
@@ -92,7 +91,7 @@ function scrapeInfo(links) {
 
 /**
   * Takes object array and parses into CSV format. Stores data in a new file named with the date.
-  *param array An array of objects representing all scraped data.
+  *@param array An array of objects representing all scraped data.
 */
 function generateCsvFile(dataset) {
   const csvDataset = d3.csvFormat(dataset);
