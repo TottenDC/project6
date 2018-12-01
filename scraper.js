@@ -23,7 +23,9 @@ function handleError(error) {
 }
 
 /**
-  * Creates
+  * Creates an HTTP request, loads page HTML into cheerio, and stores links to products in an array.
+  * If promise is resolved, returns the array.
+  *@param string The url of ecommerce site to scrape.
 */
 function grabData(url) {
   return new Promise((resolve, reject) => {
@@ -49,6 +51,13 @@ function grabData(url) {
     }
   }); //end promise
 }
+
+/**
+  * Creates an array of scraped data objects.
+  * For each link, generates new HTTP request to load page, store HTML data in object, and push to array.
+  * Returns the array only once all data has been loaded via Promise.all
+  *@param array The array of product links returned from previous function.
+*/
 
 function scrapeInfo(links) {
   const dataset = [];
@@ -81,6 +90,10 @@ function scrapeInfo(links) {
   return Promise.all(dataset);
 }
 
+/**
+  * Takes object array and parses into CSV format. Stores data in a new file named with the date.
+  *param array An array of objects representing all scraped data.
+*/
 function generateCsvFile(dataset) {
   const csvDataset = d3.csvFormat(dataset);
   fs.writeFile(`./data/${new Date().toISOString().slice(0, 10)}.csv`, csvDataset, () => {
